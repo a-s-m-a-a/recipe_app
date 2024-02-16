@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recipe_application/utils/colors.utils.dart';
 import 'package:recipe_application/viewModel/app_auth_provider.dart';
 
 class ReusableTextFormField extends StatefulWidget {
@@ -67,8 +68,9 @@ class _ReusableTextFormFieldState extends State<ReusableTextFormField> {
                     color: Colors.white,
                   ),
                   labelText: widget.lableText,
-                  labelStyle: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(
+                      color: hexStringToColor("#F45B00"),
+                      fontWeight: FontWeight.bold),
                   filled: false,
                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                 ),

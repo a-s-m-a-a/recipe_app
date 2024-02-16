@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recipe_application/utils/colors.utils.dart';
 import 'package:recipe_application/viewModel/ingredients_provider.dart';
 
 class IngredientPage extends StatefulWidget {
@@ -31,6 +32,7 @@ class _IngredientPageState extends State<IngredientPage> {
                           itemCount: ingredientProvider.ingredientList!.length,
                           itemBuilder: (context, index) => ListTile(
                                 leading: Checkbox(
+                                    checkColor: hexStringToColor("#F45B00"),
                                     value: ingredientProvider
                                         .ingredientList![index].users_ids
                                         ?.contains(FirebaseAuth

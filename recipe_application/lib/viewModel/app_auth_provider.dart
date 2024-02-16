@@ -12,6 +12,10 @@ class AppAuthprovider extends ChangeNotifier {
   TextEditingController? passwordController;
   TextEditingController? nameController;
   bool obsecuretext = false;
+  String? _imagURL;
+  String? get imageURL => _imagURL;
+  String? _name;
+  String? get name => _name;
 
   void providerInit() {
     emailController = TextEditingController();
@@ -44,7 +48,7 @@ class AppAuthprovider extends ChangeNotifier {
     try {
       if (formKey?.currentState?.validate() ?? false) {
         OverlayLoadingProgress.start();
-        var credentials = await FirebaseAuth.instance
+        UserCredential credentials = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: emailController!.text,
                 password: passwordController!.text);
@@ -64,12 +68,55 @@ class AppAuthprovider extends ChangeNotifier {
     }
   }
 
+  Future passwordReset(
+      BuildContext context, GlobalKey<FormState>? formKey) async {
+    try {
+      if (formKey?.currentState?.validate() ?? false) {
+        OverlayLoadingProgress.start();
+        await FirebaseAuth.instance
+            .sendPasswordResetEmail(email: emailController!.text);
+
+        OverlayLoadingProgress.stop();
+        providerDespose(formKey);
+        OverlayToastMessage.show(
+          widget: const ToastMessageWidget(
+            message: "Password reset link sent! Chick your Email",
+            toastMessageStatus: ToastMessageStatus.success,
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      OverlayLoadingProgress.stop();
+      OverlayToastMessage.show(
+          widget: ToastMessageWidget(
+        message: e.message.toString(),
+        toastMessageStatus: ToastMessageStatus.faild,
+      ));
+    }
+  }
+
+  Future updateUserprofile(String userName, String imageURL) async {
+    await FirebaseAuth.instance.currentUser?.updateDisplayName(userName);
+    await FirebaseAuth.instance.currentUser?.updatePhotoURL(imageURL);
+    notifyListeners();
+  }
+
+  Future getUserName() async {
+    _name = await FirebaseAuth.instance.currentUser?.displayName ?? "";
+    notifyListeners();
+  }
+
+  Future getUserPhotoURL() async {
+    _imagURL = await FirebaseAuth.instance.currentUser?.photoURL ?? "";
+    notifyListeners();
+  }
+
   Future<void> signIn(
       BuildContext context, GlobalKey<FormState>? formKey) async {
     try {
       if (formKey?.currentState?.validate() ?? false) {
         OverlayLoadingProgress.start();
-        var credentials = await FirebaseAuth.instance
+        UserCredential credentials = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: emailController!.text,
                 password: passwordController!.text);

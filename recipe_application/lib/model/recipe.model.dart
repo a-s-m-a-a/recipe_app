@@ -1,16 +1,17 @@
 class Recipe {
   String? docId;
-  String? description;  //2 
-  String? title;  //10
-  num? calories;  //1
-  num? prep_time; //7
-  num? rating;    //8  
-  num? servings;  //9
-  String? type;   //11
-  Map<String, String>? directions; //3
-  List<String>? ingredients; //5
-  String? imageUrl; //4
-  List<String>? users_ids; //12
+  String? title;
+  String? imageUrl;
+  String? description;
+  num? servings;
+  String? type;
+  num? calories;
+  num? rating;
+  num? prep_time;
+  List<String>? ingredients;
+  Map<String, String>? directions;
+  List<String>? users_ids;
+  bool? fresh;
 
   Recipe();
 
@@ -33,20 +34,22 @@ class Recipe {
     users_ids = data['users_ids'] != null
         ? List<String>.from(data['users_ids'].map((e) => e.toString()))
         : null;
+    fresh = data['fresh'];
   }
   Map<String, dynamic> toJson() {
     return {
-      'prep_time': prep_time,
-      'rating': rating,
-      'calories': calories,
-      'directions': directions,
-      'type': type,
+      'title': title,
+      'imageUrl': imageUrl,
+      'description': description,
       'servings': servings,
+      'type': type,
+      'calories': calories,
+      'rating': rating,
+      'prep_time': prep_time,
       'ingredients': ingredients,
-      "title": title,
-      "imageUrl": imageUrl,
-      "description": description,
+      'directions': directions,
       'users_ids': users_ids,
+      'fresh': fresh,
     };
   }
 }

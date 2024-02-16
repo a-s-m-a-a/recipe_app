@@ -9,16 +9,45 @@ import 'package:recipe_application/utils/toast_message_status.dart';
 class RecipeProvider extends ChangeNotifier {
   List<Recipe>? _recipesList;
   List<Recipe>? get recipesList => _recipesList;
-  List<Recipe>? _favoriteList;
-  List<Recipe>? get favoriteList => _favoriteList;
 
   List<Recipe>? _freshRecipesList;
   List<Recipe>? get freshRecipesList => _freshRecipesList;
 
   List<Recipe>? _recommandedRecipesList;
   List<Recipe>? get recommandedRecipesList => _recommandedRecipesList;
+  List<Recipe>? _filteredRecipesList;
+  List<Recipe>? get filteredRecipesList => _filteredRecipesList;
 
   Recipe? openedRecipe;
+  Future<void> getRecipes() async {
+    try {
+      var result = await FirebaseFirestore.instance.collection('recipes').get();
+      if (result.docs.isNotEmpty) {
+        _recipesList = List<Recipe>.from(
+            result.docs.map((doc) => Recipe.fromJson(doc.data(), doc.id)));
+      } else {
+        _recipesList = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      _recipesList = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> getFilteredResult(Map selectedUserValue) async {
+    var ref = FirebaseFirestore.instance.collection('recipes');
+    for (var entry in selectedUserValue.entries) {
+      ref.where(entry.key, isEqualTo: entry.value);
+    }
+
+    var result = await ref.get();
+    if (result.docs.isNotEmpty) {
+      _filteredRecipesList = List<Recipe>.from(
+          result.docs.map((doc) => Recipe.fromJson(doc.data(), doc.id)));
+    }
+    notifyListeners();
+  }
 
   Future<void> getSelectedRecipe(String recipeId) async {
     try {
@@ -37,29 +66,11 @@ class RecipeProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getRecipes() async {
-    try {
-      var result = await FirebaseFirestore.instance.collection('recipes').get();
-
-      if (result.docs.isNotEmpty) {
-        _recipesList = List<Recipe>.from(
-            result.docs.map((doc) => Recipe.fromJson(doc.data(), doc.id)));
-      } else {
-        _recipesList = [];
-      }
-      notifyListeners();
-    } catch (e) {
-      _recipesList = [];
-      notifyListeners();
-    }
-  }
-
   Future<void> getFreshRecipes() async {
     try {
       var result = await FirebaseFirestore.instance
           .collection('recipes')
-          .where('isFresh', isEqualTo: true)
-          .limit(5)
+          .where('fresh', isEqualTo: true)
           .get();
 
       if (result.docs.isNotEmpty) {
@@ -144,31 +155,18 @@ class RecipeProvider extends ChangeNotifier {
         recommandedRecipesList?.removeAt(recommandedRecipesListIndex!);
         recommandedRecipesList?.insert(
             recommandedRecipesListIndex!, updatedRecipe);
-      }
 
+        var filteredRecipesListIndex = filteredRecipesList
+            ?.indexWhere((recipe) => recipe.docId == recipeId);
+
+        if (filteredRecipesListIndex != -1) {
+          filteredRecipesList?.removeAt(filteredRecipesListIndex!);
+          filteredRecipesList?.insert(filteredRecipesListIndex!, updatedRecipe);
+        }
+      }
       notifyListeners();
     } catch (e) {
       print('>>>>>error in update recipe');
-    }
-  }
-
-  Future<void> getFavorites() async {
-    try {
-      var result = await FirebaseFirestore.instance
-          .collection('ingredients')
-          .where(FirebaseAuth.instance.currentUser!.uid, isEqualTo: "users_ids")
-          .get();
-
-      if (result.docs.isNotEmpty) {
-        _favoriteList = List<Recipe>.from(
-            result.docs.map((doc) => Recipe.fromJson(doc.data(), doc.id)));
-      } else {
-        _favoriteList = [];
-      }
-      notifyListeners();
-    } catch (e) {
-      const Text("an Error to catch favorit recipes");
-      notifyListeners();
     }
   }
 
@@ -176,8 +174,7 @@ class RecipeProvider extends ChangeNotifier {
     try {
       var result = await FirebaseFirestore.instance
           .collection('recipes')
-          .where('isFresh', isEqualTo: false)
-          .limit(5)
+          .where('fresh', isEqualTo: false)
           .get();
       if (result.docs.isNotEmpty) {
         _recommandedRecipesList = List<Recipe>.from(
@@ -213,6 +210,7 @@ class RecipeProvider extends ChangeNotifier {
         "recently_viewd_users_ids":
             FieldValue.arrayRemove([FirebaseAuth.instance.currentUser?.uid])
       });
+      notifyListeners();
     } catch (e) {}
   }
 }

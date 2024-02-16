@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_application/reusable_widgets/reusableTextFormField.dart';
+import 'package:recipe_application/reusable_widgets/reusable_button.dart';
+import 'package:recipe_application/reusable_widgets/reusable_richtext.dart';
 import 'package:recipe_application/reusable_widgets/scrollable_widget.dart';
-import 'package:recipe_application/reusable_widgets/reusable_widgits.dart';
+
 import 'package:recipe_application/utils/colors.utils.dart';
 import 'package:recipe_application/utils/images.utils.dart';
 import 'package:recipe_application/viewModel/app_auth_provider.dart';
@@ -65,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       ReusableTextFormField(
                                           controller:
                                               authProvider.nameController!,
-                                          icon: Icons.email,
+                                          icon: Icons.person,
                                           isPasswordType: false,
                                           lableText: "Full Name",
                                           validateText: "Enter your name"),
@@ -88,10 +90,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(20),
-                                  child:
-                                      reusableButton(width, 50, "Register", () {
-                                    authProvider.signUp(context, _formKey);
-                                  }),
+                                  child: ButtonWidget(
+                                      isForAuth: true,
+                                      width: width,
+                                      hight: 50,
+                                      text: "Register",
+                                      onTap: () {
+                                        authProvider.signUp(context, _formKey);
+                                      }),
                                 ),
                               ],
                             ),
@@ -104,13 +110,13 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               floatingActionButton:
                   (MediaQuery.of(context).viewInsets.bottom == 0)
-                      ? richText(2, [
+                      ? RichTextWidget(num: 2, text: const [
                           "Already have an account? ",
                           "Sign In"
-                        ], [
+                        ], colors: [
                           Colors.white,
                           hexStringToColor("#F45B00")
-                        ], [
+                        ], function: [
                           () {},
                           () {
                             authProvider.openLoginpage(context, _formKey);

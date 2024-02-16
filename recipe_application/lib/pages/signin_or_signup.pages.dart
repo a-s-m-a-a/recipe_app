@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_application/pages/login.pages.dart';
 import 'package:recipe_application/pages/register.pages.dart';
-import 'package:recipe_application/reusable_widgets/reusable_widgits.dart';
+import 'package:recipe_application/reusable_widgets/reusable_button.dart';
 import 'package:recipe_application/utils/images.utils.dart';
 
 class SigniniOrSignup extends StatefulWidget {
@@ -42,18 +42,28 @@ class _SigniniOrSignupState extends State<SigniniOrSignup> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  reusableButton(width, 60, "Register", () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()));
-                  }),
-                  reusableButton(width, 60, "Sign In", () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
-                  }),
+                  ButtonWidget(
+                      isForAuth: true,
+                      width: width,
+                      hight: 60,
+                      text: "Register",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterPage()));
+                      }),
+                  ButtonWidget(
+                      isForAuth: true,
+                      width: width,
+                      hight: 60,
+                      text: "Sign In",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()));
+                      }),
                 ],
               ),
             ),

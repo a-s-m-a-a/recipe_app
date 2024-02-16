@@ -4,26 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe_application/model/recipe.model.dart';
+import 'package:recipe_application/pages/favorites.pages.dart';
 import 'package:recipe_application/pages/home.pages.dart';
 import 'package:recipe_application/pages/ingredients.pages.dart';
-import 'package:recipe_application/pages/recently_viewed.pages.dart';
 import 'package:recipe_application/pages/settings.pages.dart';
 import 'package:recipe_application/reusable_widgets/app_bar_menu_screen.dart';
 import 'package:recipe_application/reusable_widgets/recipe_widget_list_tile.dart';
 import 'package:recipe_application/reusable_widgets/reusable_list_tile.dart';
-import 'package:recipe_application/reusable_widgets/search_bar.dart';
+import 'package:recipe_application/reusable_widgets/search_box.dart';
 import 'package:recipe_application/utils/colors.utils.dart';
 import 'package:recipe_application/utils/numbers.dart';
 import 'package:recipe_application/viewModel/app_auth_provider.dart';
 
-class FavouritesPage extends StatefulWidget {
-  const FavouritesPage({super.key});
+class RecentlyViewedPage extends StatefulWidget {
+  const RecentlyViewedPage({super.key});
 
   @override
-  State<FavouritesPage> createState() => _FavouritesPageState();
+  State<RecentlyViewedPage> createState() => _RecentlyViewedPageState();
 }
 
-class _FavouritesPageState extends State<FavouritesPage> {
+class _RecentlyViewedPageState extends State<RecentlyViewedPage> {
+  bool _isListBuilt = false;
+  late List<Recipe> recipeList;
   late ZoomDrawerController controller;
   @override
   void initState() {
@@ -44,7 +46,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
         menuScreen: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
-              automaticallyImplyLeading: false, title: AppBarMenuScreen()),
+              automaticallyImplyLeading: false,
+              title: const AppBarMenuScreen()),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -56,20 +59,24 @@ class _FavouritesPageState extends State<FavouritesPage> {
                   controller: controller,
                 ),
                 ReusedListTile(
-                  text: Text(
+                  text: const Text(
                     "Favorites",
-                    style: TextStyle(color: hexStringToColor("#F45B00")),
                   ),
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.favorite_border_rounded,
-                    color: hexStringToColor("#F45B00"),
                   ),
                   page: const FavouritesPage(),
                   controller: controller,
                 ),
                 ReusedListTile(
-                  text: const Text("Recently Viewed"),
-                  icon: const Icon(Icons.pause),
+                  text: Text(
+                    "Recently Viewed",
+                    style: TextStyle(color: hexStringToColor("#F45B00")),
+                  ),
+                  icon: Icon(
+                    Icons.pause,
+                    color: hexStringToColor("#F45B00"),
+                  ),
                   page: const RecentlyViewedPage(),
                   controller: controller,
                 ),
@@ -113,14 +120,10 @@ class _FavouritesPageState extends State<FavouritesPage> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20),
-                  child: SearchBarWidget(text: "Favorites"),
-                ),
                 StreamBuilder(
                     stream: FirebaseFirestore.instance
                         .collection('recipes')
-                        .where("users_ids",
+                        .where("recently_viewd_users_ids",
                             arrayContains:
                                 FirebaseAuth.instance.currentUser!.uid)
                         .snapshots(),
@@ -133,17 +136,27 @@ class _FavouritesPageState extends State<FavouritesPage> {
                           return const Text('ERROR WHEN GET DATA');
                         } else {
                           if (snapshots.hasData) {
-                            List<Recipe> recipesList = snapshots.data?.docs
+                            recipeList = snapshots.data?.docs
                                     .map((e) => Recipe.fromJson(e.data(), e.id))
                                     .toList() ??
                                 [];
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: recipesList.length,
-                                itemBuilder: ((context, index) =>
-                                    RecipeWidgetListTile(
-                                        isFavoritIcon: true,
-                                        recipe: recipesList[index])));
+
+                            return Column(
+                              children: [
+                                SearchBox(
+                                    text: "Reacently Viewed",
+                                    recipeList: recipeList),
+                                ListView(
+                                  shrinkWrap: true,
+                                  children: [
+                                    for (Recipe foundRecipe in recipeList)
+                                      RecipeWidgetListTile(
+                                          isFavoritIcon: false,
+                                          recipe: foundRecipe),
+                                  ],
+                                ),
+                              ],
+                            );
                           } else {
                             return const Text('No Data Found');
                           }

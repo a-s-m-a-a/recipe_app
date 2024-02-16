@@ -8,22 +8,22 @@ import 'package:recipe_application/utils/colors.utils.dart';
 import 'package:recipe_application/utils/numbers.dart';
 import 'package:recipe_application/viewModel/recipes_provider.dart';
 
-class RecipeWidget extends StatefulWidget {
+class RecipeWidgetCard extends StatefulWidget {
   final Recipe recipe;
 
-  const RecipeWidget({required this.recipe, super.key});
+  const RecipeWidgetCard({required this.recipe, super.key});
 
   @override
-  State<RecipeWidget> createState() => _RecipeWidgetState();
+  State<RecipeWidgetCard> createState() => _RecipeWidgetCardState();
 }
 
-class _RecipeWidgetState extends State<RecipeWidget> {
+class _RecipeWidgetCardState extends State<RecipeWidgetCard> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding:
           const EdgeInsets.symmetric(horizontal: Numbers.appHorizontalPadding),
-      child: Stack(
+      child: Column(
         children: [
           InkWell(
             onTap: () {
@@ -31,7 +31,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                   context,
                   MaterialPageRoute(
                       builder: (_) => RecipeDetailsPage(
-                            recipe: widget.recipe!,
+                            recipe: widget.recipe,
                           )));
             },
             child: Container(
@@ -41,21 +41,46 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                   borderRadius: BorderRadius.circular(20),
                   color: hexStringToColor("f7f8fc")),
               child: Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(5.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Transform.translate(
-                      offset: const Offset(40, 0),
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: InkWell(
+                          onTap: () {
+                            Provider.of<RecipeProvider>(context, listen: false)
+                                .addUserToRecipes(
+                              !(widget.recipe.users_ids?.contains(
+                                      FirebaseAuth.instance.currentUser?.uid) ??
+                                  false),
+                              widget.recipe.docId!,
+                            );
+                          },
+                          child: (widget.recipe.users_ids?.contains(
+                                      FirebaseAuth.instance.currentUser?.uid) ??
+                                  false
+                              ? const Icon(
+                                  Icons.favorite_border_rounded,
+                                  size: 30,
+                                  color: Colors.red,
+                                )
+                              : const Icon(
+                                  Icons.favorite_rounded,
+                                  size: 30,
+                                  color: Colors.grey,
+                                ))),
+                    ),
+                    Center(
                       child: Image.network(
-                        widget.recipe?.imageUrl ?? "",
+                        widget.recipe.imageUrl ?? "",
                         fit: BoxFit.cover,
-                        width: 160,
-                        height: 86,
+                        width: 120,
+                        height: 60,
                       ),
                     ),
                     Text(
-                      widget.recipe?.type ?? 'No Type Found',
+                      widget.recipe.type ?? 'No Type Found',
                       style: TextStyle(
                         color: hexStringToColor("128fae"),
                         fontSize: 8,
@@ -66,7 +91,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                       height: 3,
                     ),
                     Text(
-                      widget.recipe?.title ?? "",
+                      widget.recipe.title ?? "",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -86,19 +111,19 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                       unratedColor: Colors.grey,
                       itemCount: 5,
                       itemSize: 15,
-                      itemBuilder: (context, _) => const Icon(
+                      itemBuilder: (context, _) => Icon(
                         Icons.star,
-                        color: Colors.amber,
+                        color: hexStringToColor("#F45B00"),
                       ),
                       onRatingUpdate: (rating) {
-                        print(rating);
+                        //print(rating);
                       },
                     ),
                     const SizedBox(
                       height: 7,
                     ),
                     Text(
-                      widget.recipe?.calories.toString() ?? "",
+                      "${widget.recipe.calories.toString()} Calories",
                       style: const TextStyle(
                         fontSize: 8,
                         fontWeight: FontWeight.normal,
@@ -118,7 +143,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                           width: 5,
                         ),
                         Text(
-                          widget.recipe?.prep_time.toString() ?? "",
+                          "${widget.recipe.prep_time.toString()} mins",
                           style: const TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.normal,
@@ -135,7 +160,7 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                           width: 5,
                         ),
                         Text(
-                          "${widget.recipe?.servings ?? 1}",
+                          "${widget.recipe.servings} serving",
                           style: const TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.normal,
@@ -148,32 +173,6 @@ class _RecipeWidgetState extends State<RecipeWidget> {
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: InkWell(
-                onTap: () {
-                  Provider.of<RecipeProvider>(context, listen: false)
-                      .addUserToRecipes(
-                    !(widget.recipe?.users_ids?.contains(
-                            FirebaseAuth.instance.currentUser?.uid) ??
-                        false),
-                    widget.recipe!.docId!,
-                  );
-                },
-                child: (widget.recipe?.users_ids?.contains(
-                            FirebaseAuth.instance.currentUser?.uid) ??
-                        false
-                    ? const Icon(
-                        Icons.favorite_border_rounded,
-                        size: 30,
-                        color: Colors.red,
-                      )
-                    : const Icon(
-                        Icons.favorite_rounded,
-                        size: 30,
-                        color: Colors.grey,
-                      ))),
           ),
         ],
       ),
