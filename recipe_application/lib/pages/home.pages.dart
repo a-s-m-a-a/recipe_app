@@ -6,6 +6,7 @@ import 'package:recipe_application/pages/favorites.pages.dart';
 import 'package:recipe_application/pages/ingredients.pages.dart';
 import 'package:recipe_application/pages/recently_viewed.pages.dart';
 import 'package:recipe_application/pages/settings.pages.dart';
+import 'package:recipe_application/reusable_widgets/ads_widget.dart';
 import 'package:recipe_application/reusable_widgets/app_bar_menu_screen.dart';
 import 'package:recipe_application/reusable_widgets/fresh_recipes_widget.dart';
 import 'package:recipe_application/reusable_widgets/recommended_recipes_widget.dart';
@@ -129,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                         )),
                     const SearchBarWidget(
                         text: "What would you like to cook today ?"),
-                    // const AdsWidget(),
+                    const AdsWidget(),
                     const SectionHeader(sectionName: "Today's Fresh Recipes"),
                     const SizedBox(
                       height: 300,
