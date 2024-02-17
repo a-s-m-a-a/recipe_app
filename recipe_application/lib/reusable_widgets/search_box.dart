@@ -13,10 +13,10 @@ class SearchBox extends StatefulWidget {
 }
 
 class _SearchBoxState extends State<SearchBox> {
-  List<Recipe>? _foundedList = [];
+  List<Recipe> _foundedList = [];
   @override
   void initState() {
-    _foundedList = widget.recipeList;
+    _foundedList = widget.recipeList ?? [];
     super.initState();
   }
 
@@ -64,9 +64,9 @@ class _SearchBoxState extends State<SearchBox> {
   void _runFilter(String enteredKeyword) {
     List<Recipe> results = [];
     if (enteredKeyword.isEmpty) {
-      results = _foundedList!;
+      results = _foundedList;
     } else {
-      results = _foundedList!
+      results = _foundedList
           .where((item) =>
               item.type!.toLowerCase().contains(enteredKeyword.toLowerCase()))
           .toList();

@@ -185,7 +185,6 @@ class _FilterPageState extends State<FilterPage> {
                         MaterialPageRoute(
                             builder: (_) => FilteredRecipesPage(
                                 selectedUserValue: selectedUserValue)));
-                    print(selectedUserValue);
                   },
                   isForAuth: false)
             ],

@@ -24,8 +24,6 @@ class RecentlyViewedPage extends StatefulWidget {
 }
 
 class _RecentlyViewedPageState extends State<RecentlyViewedPage> {
-  bool _isListBuilt = false;
-  late List<Recipe> recipeList;
   late ZoomDrawerController controller;
   @override
   void initState() {
@@ -136,7 +134,7 @@ class _RecentlyViewedPageState extends State<RecentlyViewedPage> {
                           return const Text('ERROR WHEN GET DATA');
                         } else {
                           if (snapshots.hasData) {
-                            recipeList = snapshots.data?.docs
+                            List<Recipe> recipeList = snapshots.data?.docs
                                     .map((e) => Recipe.fromJson(e.data(), e.id))
                                     .toList() ??
                                 [];

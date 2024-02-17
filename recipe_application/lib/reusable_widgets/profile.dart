@@ -91,9 +91,10 @@ class _ProfilePageState extends State<ProfilePage> {
               width: MediaQuery.of(context).size.width,
               hight: 50,
               text: "Supmit Edit",
-              onTap: () async {
+              onTap: () {
                 String name = appAuthProvider.nameController!.text;
-                appAuthProvider.updateUserprofile(name, imageURL!);
+                appAuthProvider.updateUserprofile(name, imageURL.toString());
+                setState(() {});
               }),
         ],
       ),

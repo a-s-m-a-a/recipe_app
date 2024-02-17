@@ -151,6 +151,7 @@ class _RecipeWidgetListTileState extends State<RecipeWidgetListTile> {
                         onPressed: () {
                           recipresProvider.removeRecipeToUserRecentlyViewed(
                               widget.recipe.docId.toString());
+                          setState(() {});
                         },
                         icon: const Icon(Icons.delete))),
           ),

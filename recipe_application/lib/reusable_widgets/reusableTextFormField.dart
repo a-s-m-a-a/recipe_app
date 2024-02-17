@@ -50,7 +50,8 @@ class _ReusableTextFormFieldState extends State<ReusableTextFormField> {
                     ? TextInputType.visiblePassword
                     : TextInputType.emailAddress,
                 style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                    color: Color.fromARGB(255, 240, 141, 48),
+                    fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   suffixIcon: widget.isPasswordType
                       ? InkWell(

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:overlay_kit/overlay_kit.dart';
+import 'package:recipe_application/model/user_profile.model.dart';
 import 'package:recipe_application/pages/home.pages.dart';
 import 'package:recipe_application/pages/login.pages.dart';
 import 'package:recipe_application/pages/register.pages.dart';
@@ -16,6 +18,7 @@ class AppAuthprovider extends ChangeNotifier {
   String? get imageURL => _imagURL;
   String? _name;
   String? get name => _name;
+  List<UserProfile>? userProfile;
 
   void providerInit() {
     emailController = TextEditingController();
@@ -44,7 +47,10 @@ class AppAuthprovider extends ChangeNotifier {
   }
 
   Future<void> signUp(
-      BuildContext context, GlobalKey<FormState>? formKey) async {
+    BuildContext context,
+    GlobalKey<FormState>? formKey,
+    String imageURL,
+  ) async {
     try {
       if (formKey?.currentState?.validate() ?? false) {
         OverlayLoadingProgress.start();
@@ -61,11 +67,18 @@ class AppAuthprovider extends ChangeNotifier {
                 context, MaterialPageRoute(builder: (_) => const HomePage()));
           }
         }
+        addNewUserprofile(imageURL);
         OverlayLoadingProgress.stop();
       }
     } catch (e) {
       OverlayLoadingProgress.stop();
     }
+  }
+
+  Future updateUserprofile(String userName, String image) async {
+    await FirebaseAuth.instance.currentUser?.updateDisplayName(userName);
+    setNewUserPhotoURL(image);
+    notifyListeners();
   }
 
   Future passwordReset(
@@ -95,19 +108,39 @@ class AppAuthprovider extends ChangeNotifier {
     }
   }
 
-  Future updateUserprofile(String userName, String imageURL) async {
-    await FirebaseAuth.instance.currentUser?.updateDisplayName(userName);
-    await FirebaseAuth.instance.currentUser?.updatePhotoURL(imageURL);
+  Future addNewUserprofile(String imageURL) async {
+    await FirebaseFirestore.instance.collection('userProfile').add({
+      'imageUrl': imageURL,
+      'userId': FirebaseAuth.instance.currentUser?.uid ?? "",
+    });
     notifyListeners();
   }
 
-  Future getUserName() async {
-    _name = await FirebaseAuth.instance.currentUser?.displayName ?? "";
+  Future setNewUserPhotoURL(String image) async {
+    var result = await FirebaseFirestore.instance
+        .collection('userProfile')
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
+    if (result.docs.isNotEmpty) {
+      userProfile = List<UserProfile>.from(
+          result.docs.map((doc) => UserProfile.fromJson(doc.data(), doc.id)));
+      userProfile?[0].imageUrl = image;
+    }
     notifyListeners();
   }
 
   Future getUserPhotoURL() async {
-    _imagURL = await FirebaseAuth.instance.currentUser?.photoURL ?? "";
+    var result = await FirebaseFirestore.instance
+        .collection('userProfile')
+        .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+        .get();
+    if (result.docs.isNotEmpty) {
+      userProfile = List<UserProfile>.from(
+          result.docs.map((doc) => UserProfile.fromJson(doc.data(), doc.id)));
+      _imagURL = userProfile?[0].imageUrl;
+    } else {
+      _imagURL = '';
+    }
     notifyListeners();
   }
 

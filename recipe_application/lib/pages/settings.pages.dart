@@ -114,60 +114,58 @@ class _SettingsPAgeState extends State<SettingsPAge> {
             body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Center(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Row(children: [
-                          Text(
-                            "Settings",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.left,
-                          ),
-                        ]),
-                        Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          height: 90,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: hexStringToColor("f7f8fc")),
-                          child: Center(
-                            child: ListTile(
-                              leading: const Icon(Icons.language),
-                              title: const Text("Language"),
-                              trailing: Text(
-                                "English",
-                                style: TextStyle(
-                                    color: hexStringToColor("#F45B00"),
-                                    fontSize: 20),
-                              ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Row(children: [
+                        Text(
+                          "Settings",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,
+                        ),
+                      ]),
+                      Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: 90,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: hexStringToColor("f7f8fc")),
+                        child: Center(
+                          child: ListTile(
+                            leading: const Icon(Icons.language),
+                            title: const Text("Language"),
+                            trailing: Text(
+                              "English",
+                              style: TextStyle(
+                                  color: hexStringToColor("#F45B00"),
+                                  fontSize: 20),
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        height: 1,
+                        width: MediaQuery.of(context).size.width,
+                        color: Colors.grey,
+                      ),
+                      const Row(children: [
+                        Text(
+                          "Update your image",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,
                         ),
-                        Container(
-                          height: 1,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.grey,
-                        ),
-                        const Row(children: [
-                          Text(
-                            "Update your image",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.left,
-                          ),
-                        ]),
-                        const ProfilePage(),
-                      ],
-                    ),
+                      ]),
+                      const ProfilePage(),
+                    ],
                   ),
                 ),
               ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_application/pages/filter.pages.dart';
-import 'package:recipe_application/reusable_widgets/profile.dart';
 import 'package:recipe_application/reusable_widgets/reusable_widgits.dart';
 import 'package:recipe_application/utils/colors.utils.dart';
 

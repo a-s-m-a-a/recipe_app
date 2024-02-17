@@ -1,14 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:recipe_application/reusable_widgets/profile.dart';
-import 'package:recipe_application/reusable_widgets/reusable_richtext.dart';
-import 'package:recipe_application/utils/colors.utils.dart';
-import 'package:recipe_application/utils/images.utils.dart';
 import 'package:recipe_application/viewModel/app_auth_provider.dart';
 
 class AppBarMenuScreen extends StatefulWidget {
@@ -20,6 +12,13 @@ class AppBarMenuScreen extends StatefulWidget {
 
 class _AppBarMenuScreenState extends State<AppBarMenuScreen> {
   String name = FirebaseAuth.instance.currentUser?.displayName ?? "";
+
+  @override
+  void initState() {
+    Provider.of<AppAuthprovider>(context, listen: false).getUserPhotoURL();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AppAuthprovider>(

@@ -10,6 +10,11 @@ class RecipeProvider extends ChangeNotifier {
   List<Recipe>? _recipesList;
   List<Recipe>? get recipesList => _recipesList;
 
+  List<Recipe>? _recientlyViewedRecipesList;
+  List<Recipe>? get recientlyViewedRecipesList => _recientlyViewedRecipesList;
+  List<Recipe>? _favoritRecipesList;
+  List<Recipe>? get favoritRecipesList => _favoritRecipesList;
+
   List<Recipe>? _freshRecipesList;
   List<Recipe>? get freshRecipesList => _freshRecipesList;
 
@@ -82,6 +87,48 @@ class RecipeProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _freshRecipesList = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> getRecentlyViewedRecipesList() async {
+    try {
+      var result = await FirebaseFirestore.instance
+          .collection('recipes')
+          .where("recently_viewd_users_ids",
+              arrayContains: FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      if (result.docs.isNotEmpty) {
+        _recientlyViewedRecipesList = List<Recipe>.from(
+            result.docs.map((doc) => Recipe.fromJson(doc.data(), doc.id)));
+      } else {
+        _recientlyViewedRecipesList = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      _recientlyViewedRecipesList = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> getFavoritRecipesList() async {
+    try {
+      var result = await FirebaseFirestore.instance
+          .collection('recipes')
+          .where("users_ids",
+              arrayContains: FirebaseAuth.instance.currentUser!.uid)
+          .get();
+
+      if (result.docs.isNotEmpty) {
+        _favoritRecipesList = List<Recipe>.from(
+            result.docs.map((doc) => Recipe.fromJson(doc.data(), doc.id)));
+      } else {
+        _favoritRecipesList = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      _recientlyViewedRecipesList = [];
       notifyListeners();
     }
   }
